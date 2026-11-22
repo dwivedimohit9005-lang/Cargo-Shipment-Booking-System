@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CargoBook – Cargo Shipment Booking System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- LOGIN / SIGN UP -->
+  <section id="auth" class="auth">
+    <div class="auth-card">
+      <div class="brand dark">CargoBook</div>
+      <div class="auth-tabs">
+        <button class="atab active" data-a="login" type="button">Login</button>
+        <button class="atab" data-a="signup" type="button">Sign up</button>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <div id="loginErr" class="errors" role="alert"></div>
+        <label>Email <input name="email" type="email" autocomplete="username" required></label>
+        <label>Password <input name="password" type="password" autocomplete="current-password" required></label>
+        <button class="primary">Login</button>
+        <p class="note">Admin demo: admin@cargobook.com / Admin@123</p>
+      </form>
+
+      <form id="signupForm" class="hidden" novalidate>
+        <div id="signupErr" class="errors" role="alert"></div>
+        <label>Full name <input name="name" required></label>
+        <label>Email <input name="email" type="email" autocomplete="username" required></label>
+        <label>Phone (10 digits) <input name="phone" inputmode="numeric" required></label>
+        <label>Password (min 8, letters + numbers) <input name="password" type="password" autocomplete="new-password" required></label>
+        <label>Confirm password <input name="confirm" type="password" autocomplete="new-password" required></label>
+        <button class="primary">Create account</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- APP -->
+  <div id="app" class="hidden">
+    <header>
+      <div class="brand">CargoBook</div>
+      <nav>
+        <button class="tab active" data-view="book">Book shipment</button>
+        <button class="tab" data-view="manage" id="manageTab">My bookings</button>
+        <button class="tab" data-view="track">Track</button>
+        <button class="tab admin-only" data-view="rates">Rates</button>
+      </nav>
+      <div class="userbox">
+        <span id="who"></span>
+        <button id="logout" class="ghost" type="button">Logout</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- BOOK -->
+      <section id="book" class="view active">
+        <h1>Book a cargo shipment</h1>
+        <p class="lead">Enter your cargo details. The quotation updates as you type.</p>
+        <div class="split">
+          <form id="form" novalidate>
+            <div id="errors" class="errors" role="alert"></div>
+
+            <fieldset>
+              <legend>Customer details</legend>
+              <label>Full name <input name="name" required></label>
+              <label>Company <input name="company"></label>
+              <label>Email <input name="email" type="email" required></label>
+              <label>Phone (10 digits) <input name="phone" inputmode="numeric" required></label>
+            </fieldset>
+
+            <fieldset>
+              <legend>Cargo details</legend>
+              <label class="wide">Description <input name="desc" placeholder="e.g. 40 cartons of ceramic tiles" required></label>
+              <label>Cargo type
+                <select name="type">
+                  <option>General</option><option>Fragile</option><option>Perishable</option>
+                  <option>Hazardous</option><option>Machinery</option>
+                </select>
+              </label>
+              <label>Number of packages <input name="qty" type="number" min="1" value="1" required></label>
+              <label>Length (cm) <input name="l" type="number" min="1" required></label>
+              <label>Width (cm) <input name="w" type="number" min="1" required></label>
+              <label>Height (cm) <input name="h" type="number" min="1" required></label>
+              <label>Total weight (kg) <input name="weight" type="number" min="1" required></label>
+            </fieldset>
+
+            <fieldset>
+              <legend>Route and service</legend>
+              <label>Pickup city <input name="from" list="cities" placeholder="Select a city" required></label>
+              <label>Destination city <input name="to" list="cities" placeholder="Select a city" required></label>
+              <datalist id="cities"></datalist>
+              <label>Transport
+                <select name="service">
+                  <option>Road</option><option>Rail</option><option>Air</option><option>Sea</option>
+                </select>
+              </label>
+              <label>Pickup date <input name="date" type="date" required></label>
+            </fieldset>
+
+            <button type="submit" class="primary">Confirm booking</button>
+          </form>
+
+          <aside class="quote" aria-live="polite">
+            <h2>Quotation</h2>
+            <dl id="quote"></dl>
+            <p id="handling" class="note"></p>
+          </aside>
+        </div>
+      </section>
+
+      <!-- MANAGE / MY BOOKINGS -->
+      <section id="manage" class="view">
+        <h1 id="manageTitle">My bookings</h1>
+        <div class="stats" id="stats"></div>
+        <div class="toolbar">
+          <input id="search" type="search" placeholder="Search by ID, customer or city">
+          <select id="filter"></select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Customer</th><th>Route</th><th>Cargo</th><th>Total</th><th>Status</th><th></th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <p id="empty" class="note">No bookings yet.</p>
+      </section>
+
+      <!-- TRACK -->
+      <section id="track" class="view">
+        <h1>Track a shipment</h1>
+        <form id="trackForm" class="toolbar">
+          <input id="trackId" placeholder="Enter booking ID, e.g. CB-1001" required>
+          <button class="primary">Track</button>
+        </form>
+        <div id="trackResult"></div>
+      </section>
+
+      <!-- RATES (admin only) -->
+      <section id="rates" class="view">
+        <h1>Rate settings</h1>
+        <p class="lead">Admin only. Changes apply to all new quotations immediately.</p>
+        <form id="rateForm" novalidate>
+          <fieldset id="rateFields"></fieldset>
+          <div class="toolbar">
+            <button class="primary">Save rates</button>
+            <button type="button" id="rateReset" class="ghost">Reset to default</button>
+          </div>
+          <p id="rateMsg" class="note"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer>CSE326 CA1 Project · Cargo Shipment Booking System</footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
