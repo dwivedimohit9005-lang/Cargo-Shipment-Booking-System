@@ -4,9 +4,6 @@ A web-based platform where businesses can book cargo shipments, get an instant f
 
 **Course:** CSE326 | **Assessment:** CA1 Project-Based Assessment | **Team:** Team 8
 
-🔗 **Live Demo:** https://YOURUSERNAME.github.io/cargo-shipment-booking/
-🎥 **Video Presentation:** PASTE_VIDEO_LINK_HERE
-
 ## Problem Statement
 Businesses that ship large quantities of goods usually have to call logistics companies to share cargo dimensions, weight, destination and transport type, and then wait for a quotation. This is slow and error-prone. CargoBook digitizes the whole process: booking, pricing, status tracking and management.
 
